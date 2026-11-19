@@ -182,3 +182,227 @@
     border-right-color: var(--border);
   }
 }
+/* Login */
+.auth-page {
+  min-height: 100vh;
+    display: flex;
+      align-items: center;
+        justify-content: center;
+          padding: 24px;
+            background: #09090b;
+            }
+
+            .auth-card {
+              width: 100%;
+                max-width: 420px;
+                  padding: 32px;
+                    border: 1px solid #27272a;
+                      border-radius: 16px;
+                        background: #111113;
+                          color: #e5e7eb;
+                          }
+
+                          .auth-card h1 {
+                            margin: 0 0 8px;
+                              font-size: 28px;
+                              }
+
+                              .auth-card h2 {
+                                margin: 0 0 28px;
+                                  color: #a1a1aa;
+                                    font-size: 18px;
+                                      font-weight: 500;
+                                      }
+
+                                      .form-group {
+                                        margin-bottom: 18px;
+                                        }
+
+                                        .form-group label {
+                                          display: block;
+                                            margin-bottom: 7px;
+                                              font-size: 14px;
+                                                color: #d4d4d8;
+                                                }
+
+                                                .form-group input {
+                                                  width: 100%;
+                                                    padding: 12px 14px;
+                                                      border: 1px solid #3f3f46;
+                                                        border-radius: 8px;
+                                                          outline: none;
+                                                            background: #18181b;
+                                                              color: #fff;
+                                                              }
+
+                                                              .form-group input:focus {
+                                                                border-color: #71717a;
+                                                                }
+
+                                                                .auth-card button {
+                                                                  width: 100%;
+                                                                    margin-top: 8px;
+                                                                      padding: 12px 16px;
+                                                                        border: 0;
+                                                                          border-radius: 8px;
+                                                                            background: #2563eb;
+                                                                              color: white;
+                                                                                cursor: pointer;
+                                                                                  font-weight: 600;
+                                                                                  }
+
+                                                                                  .auth-card button:disabled {
+                                                                                    opacity: 0.6;
+                                                                                      cursor: not-allowed;
+                                                                                      }
+
+                                                                                      .auth-error {
+                                                                                        margin: 12px 0;
+                                                                                          color: #f87171;
+                                                                                            font-size: 14px;
+                                                                                            }
+
+                                                                                            .auth-register {
+                                                                                              margin-top: 22px;
+                                                                                                text-align: center;
+                                                                                                  color: #a1a1aa;
+                                                                                                    font-size: 14px;
+                                                                                                    }
+
+                                                                                                    .auth-register a {
+                                                                                                      color: #60a5fa;
+                                                                                                        text-decoration: none;
+                                                                                                        }
+
+                                                                                                        .auth-register a:hover {
+                                                                                                          text-decoration: underline;
+                                                                                                          }
+
+
+/* =========================================================
+   LOGIN - ESTILOS
+   ========================================================= */
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.auth-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #09090b;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  background: #111113;
+  color: #e5e7eb;
+}
+
+.auth-card h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.auth-card h2 {
+  margin: 0 0 28px;
+  color: #a1a1aa;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 14px;
+  color: #d4d4d8;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  outline: none;
+  background: #18181b;
+  color: #fff;
+}
+
+.form-group input:focus {
+  border-color: #71717a;
+}
+
+.auth-card button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.auth-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-error {
+  margin: 12px 0;
+  color: #f87171;
+  font-size: 14px;
+}
+
+.auth-register {
+  margin-top: 22px;
+  text-align: center;
+  color: #a1a1aa;
+  font-size: 14px;
+}
+
+.auth-register a {
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.auth-register a:hover {
+  text-decoration: underline;
+}
+
+/* Compatibilidad con contenedores de autenticación */
+.auth-container,
+.login-container,
+.register-container,
+.login-page,
+.register-page {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.auth-container input,
+.login-container input,
+.register-container input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.auth-container button,
+.login-container button,
+.register-container button {
+  cursor: pointer;
+}
