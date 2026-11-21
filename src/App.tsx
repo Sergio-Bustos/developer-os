@@ -18,6 +18,7 @@ function App() {
     <HashRouter>
       <AuthProvider>
         <Routes>
+          <Route path="/" element={<AuthCallback />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
