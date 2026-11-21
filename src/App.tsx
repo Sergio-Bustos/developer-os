@@ -9,6 +9,7 @@ import Projects from './pages/Projects'
 import Goals from './pages/Goals'
 import Documents from './pages/Documents'
 import Github from './pages/Github'
+import AuthCallback from './pages/AuthCallback'
 import ProtectedRoute from './components/ProtectedRoute'
 import AppLayout from './components/AppLayout'
 
@@ -19,6 +20,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>

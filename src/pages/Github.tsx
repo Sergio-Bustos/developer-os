@@ -76,7 +76,7 @@ export default function GithubPage() {
     setError('')
     setSuccess('')
 
-    const redirectTo = `${window.location.origin}/github`
+    const redirectTo = `${window.location.origin}/auth/callback`
 
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'github',
