@@ -10,61 +10,46 @@ export default function AuthCallback() {
     let active = true
 
     async function handleCallback() {
-      const params = new URLSearchParams(window.location.search)
-      const code = params.get('code')
+      const { data, error: sessionError } =
+        await supabase.auth.getSession()
 
-      if (!code) {
-        const { data, error: sessionError } =
-          await supabase.auth.getSession()
-
-        if (sessionError) {
-          if (active) setError(sessionError.message)
-          return
+      if (sessionError) {
+        if (active) {
+          setError(sessionError.message)
         }
+        return
+      }
 
-        if (!data.session) {
-          if (active) {
-            setError('No se encontró un código de autenticación de GitHub.')
-          }
-          return
-        }
+      if (data.session) {
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
+        )
 
         navigate('/github', { replace: true })
         return
       }
 
-      const { error: exchangeError } =
-        await supabase.auth.exchangeCodeForSession(code)
+      const timeout = window.setTimeout(async () => {
+        const { data: retryData, error: retryError } =
+          await supabase.auth.getSession()
 
-      if (exchangeError) {
-        if (active) {
-          setError(exchangeError.message)
+        if (retryError) {
+          if (active) {
+            setError(retryError.message)
+          }
+          return
         }
-        return
-      }
 
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname,
-      )
-
-      const { data, error: sessionError } =
-        await supabase.auth.getSession()
-
-      if (sessionError) {
-        if (active) setError(sessionError.message)
-        return
-      }
-
-      if (!data.session) {
-        if (active) {
-          setError('No se pudo recuperar la sesión de GitHub.')
+        if (retryData.session) {
+          navigate('/github', { replace: true })
+        } else if (active) {
+          setError('No se pudo completar la conexión con GitHub.')
         }
-        return
-      }
+      }, 1000)
 
-      navigate('/github', { replace: true })
+      return () => window.clearTimeout(timeout)
     }
 
     handleCallback()
