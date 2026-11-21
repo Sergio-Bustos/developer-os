@@ -1,4 +1,4 @@
-import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Tasks from './pages/Tasks'
 import Learning from './pages/Learning'
@@ -15,15 +15,12 @@ import AppLayout from './components/AppLayout'
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<AuthCallback />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
           <Route path="/auth/callback" element={<AuthCallback />} />
-
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
@@ -35,11 +32,10 @@ function App() {
               <Route path="/github" element={<Github />} />
             </Route>
           </Route>
-
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 
