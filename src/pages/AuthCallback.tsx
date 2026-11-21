@@ -10,19 +10,44 @@ export default function AuthCallback() {
     let active = true
 
     async function handleCallback() {
-      const code = new URLSearchParams(window.location.search).get('code')
+      const params = new URLSearchParams(window.location.search)
+      const code = params.get('code')
 
-      if (code) {
-        const { error: exchangeError } =
-          await supabase.auth.exchangeCodeForSession(code)
+      if (!code) {
+        const { data, error: sessionError } =
+          await supabase.auth.getSession()
 
-        if (exchangeError) {
-          if (active) setError(exchangeError.message)
+        if (sessionError) {
+          if (active) setError(sessionError.message)
           return
         }
 
-        window.history.replaceState({}, '', window.location.pathname)
+        if (!data.session) {
+          if (active) {
+            setError('No se encontró un código de autenticación de GitHub.')
+          }
+          return
+        }
+
+        navigate('/github', { replace: true })
+        return
       }
+
+      const { error: exchangeError } =
+        await supabase.auth.exchangeCodeForSession(code)
+
+      if (exchangeError) {
+        if (active) {
+          setError(exchangeError.message)
+        }
+        return
+      }
+
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname,
+      )
 
       const { data, error: sessionError } =
         await supabase.auth.getSession()
@@ -57,7 +82,9 @@ export default function AuthCallback() {
             Error al conectar GitHub
           </h1>
 
-          <p className="text-sm text-red-300">{error}</p>
+          <p className="text-sm text-red-300">
+            {error}
+          </p>
 
           <button
             onClick={() => navigate('/github', { replace: true })}
