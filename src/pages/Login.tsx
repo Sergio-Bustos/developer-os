@@ -31,6 +31,30 @@ export default function Login() {
 
   return (
     <main className="auth-page">
+      <section className="auth-poster">
+        <div className="auth-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="34" height="34">
+            <circle
+              cx="16"
+              cy="16"
+              r="12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeDasharray="52 24"
+              strokeLinecap="round"
+              className="mark-ring"
+            />
+            <circle cx="16" cy="16" r="4.2" className="mark-core" />
+          </svg>
+        </div>
+
+        <p className="auth-statement">
+          Tu centro de control para desarrollo, aprendizaje y
+          productividad.
+        </p>
+      </section>
+
       <div className="auth-card">
         <h1>Developer OS</h1>
 

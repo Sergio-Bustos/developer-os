@@ -4,13 +4,18 @@ import { useAuth } from '../context/AuthContext'
 export default function ProtectedRoute() {
   const { user, loading } = useAuth()
 
-    if (loading) {
-        return <p>Cargando Developer OS...</p>
-          }
+  if (loading) {
+    return (
+      <div className="splash" role="status">
+        <span className="splash-mark" aria-hidden="true" />
+        <p>Cargando Developer OS...</p>
+      </div>
+    )
+  }
 
-            if (!user) {
-                return <Navigate to="/login" replace />
-                  }
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
 
-                    return <Outlet />
-                    }
+  return <Outlet />
+}

@@ -1,108 +1,133 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import '../App.css'
 
 export default function Register() {
   const navigate = useNavigate()
-    const { signUp } = useAuth()
+  const { signUp } = useAuth()
 
-      const [displayName, setDisplayName] = useState('')
-        const [email, setEmail] = useState('')
-          const [password, setPassword] = useState('')
-            const [error, setError] = useState('')
-              const [message, setMessage] = useState('')
-                const [loading, setLoading] = useState(false)
+  const [displayName, setDisplayName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
 
-                  async function handleSubmit(event: FormEvent) {
-                      event.preventDefault()
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault()
 
-                          setError('')
-                              setMessage('')
-                                  setLoading(true)
+    setError('')
+    setMessage('')
+    setLoading(true)
 
-                                      if (password.length < 6) {
-                                            setError('La contraseña debe tener mínimo 6 caracteres.')
-                                                  setLoading(false)
-                                                        return
-                                                            }
+    if (password.length < 6) {
+      setError('La contraseña debe tener mínimo 6 caracteres.')
+      setLoading(false)
+      return
+    }
 
-                                                                const result = await signUp(email, password, displayName)
+    const result = await signUp(email, password, displayName)
 
-                                                                    if (result.error) {
-                                                                          setError(result.error.message)
-                                                                                setLoading(false)
-                                                                                      return
-                                                                                          }
+    if (result.error) {
+      setError(result.error.message)
+      setLoading(false)
+      return
+    }
 
-                                                                                              setMessage(
-                                                                                                    'Cuenta creada correctamente. Ahora puedes iniciar sesión.'
-                                                                                                        )
+    setMessage(
+      'Cuenta creada correctamente. Ahora puedes iniciar sesión.'
+    )
 
-                                                                                                            setLoading(false)
+    setLoading(false)
 
-                                                                                                                setTimeout(() => {
-                                                                                                                      navigate('/login')
-                                                                                                                          }, 1500)
-                                                                                                                            }
+    setTimeout(() => {
+      navigate('/login')
+    }, 1500)
+  }
 
-                                                                                                                              return (
-                                                                                                                                  <main>
-                                                                                                                                        <div>
-                                                                                                                                                <h1>Developer OS</h1>
+  return (
+    <main className="auth-page">
+      <section className="auth-poster">
+        <div className="auth-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="34" height="34">
+            <circle
+              cx="16"
+              cy="16"
+              r="12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeDasharray="52 24"
+              strokeLinecap="round"
+              className="mark-ring"
+            />
+            <circle cx="16" cy="16" r="4.2" className="mark-core" />
+          </svg>
+        </div>
 
-                                                                                                                                                        <h2>Crear cuenta</h2>
+        <p className="auth-statement">
+          Tu centro de control para desarrollo, aprendizaje y
+          productividad.
+        </p>
+      </section>
 
-                                                                                                                                                                <form onSubmit={handleSubmit}>
-                                                                                                                                                                          <div>
-                                                                                                                                                                                      <label htmlFor="displayName">Nombre</label>
+      <div className="auth-card">
+        <h1>Developer OS</h1>
 
-                                                                                                                                                                                                  <input
-                                                                                                                                                                                                                id="displayName"
-                                                                                                                                                                                                                              type="text"
-                                                                                                                                                                                                                                            value={displayName}
-                                                                                                                                                                                                                                                          onChange={(event) => setDisplayName(event.target.value)}
-                                                                                                                                                                                                                                                                        required
-                                                                                                                                                                                                                                                                                    />
-                                                                                                                                                                                                                                                                                              </div>
+        <h2>Crear cuenta</h2>
 
-                                                                                                                                                                                                                                                                                                        <div>
-                                                                                                                                                                                                                                                                                                                    <label htmlFor="email">Correo</label>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="displayName">Nombre</label>
 
-                                                                                                                                                                                                                                                                                                                                <input
-                                                                                                                                                                                                                                                                                                                                              id="email"
-                                                                                                                                                                                                                                                                                                                                                            type="email"
-                                                                                                                                                                                                                                                                                                                                                                          value={email}
-                                                                                                                                                                                                                                                                                                                                                                                        onChange={(event) => setEmail(event.target.value)}
-                                                                                                                                                                                                                                                                                                                                                                                                      required
-                                                                                                                                                                                                                                                                                                                                                                                                                  />
-                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+            <input
+              id="displayName"
+              type="text"
+              value={displayName}
+              onChange={(event) => setDisplayName(event.target.value)}
+              required
+            />
+          </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                      <div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                  <label htmlFor="password">Contraseña</label>
+          <div className="form-group">
+            <label htmlFor="email">Correo</label>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                              <input
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            id="password"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          type="password"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        value={password}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      onChange={(event) => setPassword(event.target.value)}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    minLength={6}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  required
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              />
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {error && <p>{error}</p>}
+          <div className="form-group">
+            <label htmlFor="password">Contraseña</label>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {message && <p>{message}</p>}
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              minLength={6}
+              required
+            />
+          </div>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <button type="submit" disabled={loading}>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {loading ? 'Creando cuenta...' : 'Crear cuenta'}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </form>
+          {error && <p className="auth-error">{error}</p>}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </main>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
+          {message && <p className="auth-ok">{message}</p>}
+
+          <button type="submit" disabled={loading}>
+            {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+          </button>
+        </form>
+
+        <p className="auth-register">
+          ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
+        </p>
+      </div>
+    </main>
+  )
+}

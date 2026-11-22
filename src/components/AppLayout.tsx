@@ -1,131 +1,197 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useLayoutEffect, useRef } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
   BarChart3,
-    BookOpen,
-      FolderKanban,
-        LayoutDashboard,
-          LogOut,
-              Target,
-                CheckSquare,
-                  FileText,
-                    GitBranch,
-                    } from 'lucide-react'
-                    import { useAuth } from '../context/AuthContext'
+  BookOpen,
+  FolderKanban,
+  LayoutDashboard,
+  LogOut,
+  Target,
+  CheckSquare,
+  FileText,
+  GitBranch,
+} from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
-                    const navigation = [
-                      {
-                          name: 'Dashboard',
-                              path: '/dashboard',
-                                  icon: LayoutDashboard,
-                                    },
-                                      {
-                                          name: 'Projects',
-                                              path: '/projects',
-                                                  icon: FolderKanban,
-                                                    },
-                                                      {
-                                                          name: 'Tasks',
-                                                              path: '/tasks',
-                                                                  icon: CheckSquare,
-                                                                    },
-                                                                      {
-                                                                          name: 'Learning',
-                                                                              path: '/learning',
-                                                                                  icon: BookOpen,
-                                                                                    },
-                                                                                      {
-                                                                                          name: 'Goals',
-                                                                                              path: '/goals',
-                                                                                                  icon: Target,
-                                                                                                    },
-                                                                                                      {
-                                                                                                          name: 'Documents',
-                                                                                                              path: '/documents',
-                                                                                                                  icon: FileText,
-                                                                                                                    },
-                                                                                                                      {
-                                                                                                                          name: 'GitHub',
-                                                                                                                              path: '/github',
-                                                                                                                                  icon: GitBranch,
-                                                                                                                                    },
-                                                                                                                                      {
-                                                                                                                                          name: 'Metrics',
-                                                                                                                                              path: '/metrics',
-                                                                                                                                                  icon: BarChart3,
-                                                                                                                                                    },
-                                                                                                                                                    ]
+const navigation = [
+  {
+    name: 'Dashboard',
+    path: '/dashboard',
+    icon: LayoutDashboard,
+  },
+  {
+    name: 'Projects',
+    path: '/projects',
+    icon: FolderKanban,
+  },
+  {
+    name: 'Tasks',
+    path: '/tasks',
+    icon: CheckSquare,
+  },
+  {
+    name: 'Learning',
+    path: '/learning',
+    icon: BookOpen,
+  },
+  {
+    name: 'Goals',
+    path: '/goals',
+    icon: Target,
+  },
+  {
+    name: 'Documents',
+    path: '/documents',
+    icon: FileText,
+  },
+  {
+    name: 'GitHub',
+    path: '/github',
+    icon: GitBranch,
+  },
+  {
+    name: 'Metrics',
+    path: '/metrics',
+    icon: BarChart3,
+  },
+]
 
-                                                                                                                                                    export default function AppLayout() {
-                                                                                                                                                      const { user, signOut } = useAuth()
+export default function AppLayout() {
+  const { user, signOut } = useAuth()
+  const { pathname } = useLocation()
+  const navRef = useRef<HTMLElement>(null)
+  const indicatorRef = useRef<HTMLSpanElement>(null)
 
-                                                                                                                                                        async function handleSignOut() {
-                                                                                                                                                            await signOut()
-                                                                                                                                                              }
+  async function handleSignOut() {
+    await signOut()
+  }
 
-                                                                                                                                                                return (
-                                                                                                                                                                    <div className="min-h-screen bg-zinc-950 text-zinc-100 md:flex">
-                                                                                                                                                                          <aside className="w-full border-b border-zinc-800 bg-zinc-900 md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col md:border-b-0 md:border-r">
-                                                                                                                                                                                  <div className="flex h-16 items-center border-b border-zinc-800 px-5">
-                                                                                                                                                                                            <div>
-                                                                                                                                                                                                        <h1 className="text-lg font-bold tracking-tight">
-                                                                                                                                                                                                                      Developer OS
-                                                                                                                                                                                                                                  </h1>
+  const displayName = String(user?.user_metadata?.display_name || 'Developer')
+  const initial = displayName.trim().charAt(0).toUpperCase() || 'D'
 
-                                                                                                                                                                                                                                              <p className="text-xs text-zinc-500">
-                                                                                                                                                                                                                                                            Personal workspace
-                                                                                                                                                                                                                                                                        </p>
-                                                                                                                                                                                                                                                                                  </div>
-                                                                                                                                                                                                                                                                                          </div>
+  // El indicador de la sección activa se desliza entre opciones
+  useLayoutEffect(() => {
+    const nav = navRef.current
+    const indicator = indicatorRef.current
+    if (!nav || !indicator) return
 
-                                                                                                                                                                                                                                                                                                  <nav className="flex gap-1 overflow-x-auto p-3 md:flex-1 md:flex-col">
-                                                                                                                                                                                                                                                                                                            {navigation.map((item) => {
-                                                                                                                                                                                                                                                                                                                        const Icon = item.icon
+    function place(animate: boolean) {
+      const active = nav!.querySelector<HTMLElement>('a[aria-current="page"]')
+      if (!active) {
+        indicator!.style.opacity = '0'
+        return
+      }
+      indicator!.style.opacity = '1'
+      indicator!.style.setProperty('--ix', `${active.offsetLeft}px`)
+      indicator!.style.setProperty('--iy', `${active.offsetTop}px`)
+      indicator!.style.setProperty('--iw', `${active.offsetWidth}px`)
+      indicator!.style.setProperty('--ih', `${active.offsetHeight}px`)
+      if (!animate) {
+        void indicator!.offsetWidth
+        indicator!.dataset.ready = '1'
+      }
+      // En celular el menú se desplaza: mantén visible la sección activa
+      if (nav!.scrollWidth > nav!.clientWidth) {
+        nav!.scrollTo({
+          left: active.offsetLeft - (nav!.clientWidth - active.offsetWidth) / 2,
+          behavior: 'smooth',
+        })
+      }
+    }
 
-                                                                                                                                                                                                                                                                                                                                    return (
-                                                                                                                                                                                                                                                                                                                                                  <NavLink
-                                                                                                                                                                                                                                                                                                                                                                  key={item.path}
-                                                                                                                                                                                                                                                                                                                                                                                  to={item.path}
-                                                                                                                                                                                                                                                                                                                                                                                                  className={({ isActive }) =>
-                                                                                                                                                                                                                                                                                                                                                                                                                    `flex min-w-fit items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${
-                                                                                                                                                                                                                                                                                                                                                                                                                                        isActive
-                                                                                                                                                                                                                                                                                                                                                                                                                                                              ? 'bg-zinc-800 text-white'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    : 'text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }`
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    >
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <Icon size={18} />
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span>{item.name}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </NavLink>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        })}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </nav>
+    place(indicator.dataset.ready === '1')
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div className="border-t border-zinc-800 p-3">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <div className="mb-3 rounded-lg bg-zinc-950 p-3">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <p className="truncate text-sm text-zinc-200">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {user?.user_metadata?.display_name || 'Developer'}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </p>
+    const onResize = () => place(true)
+    window.addEventListener('resize', onResize)
+    document.fonts?.ready.then(() => place(true))
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p className="truncate text-xs text-zinc-500">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {user?.email}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+    return () => window.removeEventListener('resize', onResize)
+  }, [pathname])
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <button
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              onClick={handleSignOut}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    >
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <LogOut size={18} />
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Cerrar sesión
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </aside>
+  return (
+    <div className="shell">
+      <aside className="rail">
+        <div className="rail-brand">
+          <span className="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="30" height="30">
+              <circle
+                cx="16"
+                cy="16"
+                r="12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeDasharray="52 24"
+                strokeLinecap="round"
+                className="mark-ring"
+              />
+              <circle cx="16" cy="16" r="4.2" className="mark-core" />
+            </svg>
+          </span>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <main className="min-h-screen w-full md:ml-64">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <div className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <Outlet />
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </main>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+          <div className="min-w-0">
+            <h1 className="brand-name">Developer OS</h1>
+
+            <p className="brand-sub">Personal workspace</p>
+          </div>
+
+          <button
+            onClick={handleSignOut}
+            className="rail-out-compact"
+            aria-label="Cerrar sesión"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
+
+        <nav ref={navRef} className="rail-nav" aria-label="Principal">
+          <span ref={indicatorRef} className="nav-ind" aria-hidden="true" />
+
+          {navigation.map((item) => {
+            const Icon = item.icon
+
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `rail-link${isActive ? ' is-active' : ''}`
+                }
+              >
+                <Icon size={18} />
+                <span>{item.name}</span>
+              </NavLink>
+            )
+          })}
+        </nav>
+
+        <div className="rail-user">
+          <div className="user-card">
+            <span className="avatar" aria-hidden="true">
+              {initial}
+            </span>
+
+            <div className="min-w-0">
+              <p className="user-name">{displayName}</p>
+
+              <p className="user-mail">{user?.email}</p>
+            </div>
+          </div>
+
+          <button onClick={handleSignOut} className="rail-out">
+            <LogOut size={18} />
+            Cerrar sesión
+          </button>
+        </div>
+      </aside>
+
+      <main className="stage">
+        <div className="stage-inner">
+          <div key={pathname} className="page-enter">
+            <Outlet />
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
