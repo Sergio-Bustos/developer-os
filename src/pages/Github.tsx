@@ -151,6 +151,39 @@ export default function GithubPage() {
     setSuccess('GitHub conectado correctamente.')
   }
 
+  async function loadSavedRepositories() {
+    if (!user) return
+
+    const { data, error: dbError } = await supabase
+      .from('github_repositories')
+      .select(
+        'github_id, github_repo_id, name, full_name, html_url, description, private, default_branch, language, stars, forks, updated_at',
+      )
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+
+    if (dbError) {
+      setError(dbError.message)
+      return
+    }
+
+    const savedRepos: GithubRepo[] = (data || []).map((repo) => ({
+      id: Number(repo.github_repo_id ?? repo.github_id),
+      name: repo.name,
+      full_name: repo.full_name,
+      html_url: repo.html_url,
+      description: repo.description,
+      private: repo.private,
+      default_branch: repo.default_branch,
+      language: repo.language,
+      stargazers_count: repo.stars ?? 0,
+      forks_count: repo.forks ?? 0,
+      updated_at: repo.updated_at,
+    }))
+
+    setRepos(savedRepos)
+  }
+
   async function loadRepositories() {
     setError('')
     setSuccess('')
@@ -192,6 +225,7 @@ export default function GithubPage() {
       if (user) {
         const rows = data.map((repo) => ({
           user_id: user.id,
+          github_id: repo.id,
           github_repo_id: String(repo.id),
           name: repo.name,
           full_name: repo.full_name,
@@ -247,6 +281,7 @@ export default function GithubPage() {
 
     async function init() {
       await loadConnection()
+      await loadSavedRepositories()
 
       const { data } = await supabase.auth.getSession()
       const hasGithubIdentity = Boolean(
