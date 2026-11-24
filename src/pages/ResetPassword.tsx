@@ -10,22 +10,59 @@ export default function ResetPassword() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [checking, setChecking] = useState(true)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     let active = true
 
-    async function checkRecoverySession() {
-      const { data } = await supabase.auth.getSession()
-      if (!active) return
+    async function prepareRecovery() {
+      try {
+        const url = new URL(window.location.href)
+        const code = url.searchParams.get('code')
 
-      setReady(Boolean(data.session))
-      if (!data.session) {
-        setError('El enlace de recuperación no es válido o ya expiró.')
+        if (code) {
+          const { error: exchangeError } =
+            await supabase.auth.exchangeCodeForSession(code)
+
+          if (exchangeError) {
+            if (active) {
+              setError('El enlace de recuperación no es válido o ya expiró.')
+              setReady(false)
+            }
+            return
+          }
+
+          window.history.replaceState(
+            {},
+            document.title,
+            `${window.location.origin}${window.location.pathname}`,
+          )
+        }
+
+        const { data, error: sessionError } =
+          await supabase.auth.getSession()
+
+        if (!active) return
+
+        if (sessionError || !data.session) {
+          setError('El enlace de recuperación no es válido o ya expiró.')
+          setReady(false)
+        } else {
+          setError('')
+          setReady(true)
+        }
+      } catch {
+        if (active) {
+          setError('No se pudo validar el enlace de recuperación.')
+          setReady(false)
+        }
+      } finally {
+        if (active) setChecking(false)
       }
     }
 
-    void checkRecoverySession()
+    void prepareRecovery()
 
     const {
       data: { subscription },
@@ -35,6 +72,7 @@ export default function ResetPassword() {
       if (event === 'PASSWORD_RECOVERY' && session) {
         setReady(true)
         setError('')
+        setChecking(false)
       }
     })
 
@@ -60,7 +98,8 @@ export default function ResetPassword() {
     }
 
     setLoading(true)
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    const { error: updateError } =
+      await supabase.auth.updateUser({ password })
     setLoading(false)
 
     if (updateError) {
@@ -70,6 +109,29 @@ export default function ResetPassword() {
 
     setMessage('Contraseña actualizada correctamente. Redirigiendo...')
     window.setTimeout(() => navigate('/dashboard', { replace: true }), 1200)
+  }
+
+  if (checking) {
+    return (
+      <main className="auth-page">
+        <section className="auth-poster">
+          <div className="auth-mark" aria-hidden="true">
+            <svg viewBox="0 0 28 28" width="34" height="34" className="mark-bars">
+              <rect x="2" y="4" width="24" height="4" />
+              <rect x="2" y="12" width="17" height="4" />
+              <rect x="2" y="20" width="10" height="4" />
+            </svg>
+          </div>
+          <p className="auth-statement">Define una nueva contraseña y vuelve a tu espacio.</p>
+        </section>
+
+        <div className="auth-card">
+          <h1>Developer OS</h1>
+          <h2>Validando enlace...</h2>
+          <p>Estamos verificando tu enlace de recuperación.</p>
+        </div>
+      </main>
+    )
   }
 
   return (
