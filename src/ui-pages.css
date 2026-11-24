@@ -71,3 +71,12 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--gold); }
 .stage .grid > :nth-child(3), .stage .space-y-3 > :nth-child(3), .stage .space-y-4 > :nth-child(3) { --k: 2; }
 .stage .grid > :nth-child(4), .stage .space-y-3 > :nth-child(4), .stage .space-y-4 > :nth-child(4) { --k: 3; }
 .stage .grid > :nth-child(n+5), .stage .space-y-3 > :nth-child(n+5), .stage .space-y-4 > :nth-child(n+5) { --k: 4; }
+
+/* Selector de archivo y barras de progreso: dorado, como el resto de botones */
+.stage input[type="file"]::file-selector-button {
+  background: rgba(240, 180, 90, .12); color: var(--gold); border: 1px solid rgba(240, 180, 90, .35);
+  border-radius: 6px; padding: .5rem 1rem; margin-right: 1rem; cursor: pointer;
+  font-family: var(--f-display); font-weight: 800; font-size: 1.1rem; transition: background .2s, color .2s;
+}
+.stage input[type="file"]::file-selector-button:hover { background: var(--gold); color: #1a1205; }
+.stage [class*="rounded-full"][class*="bg-emerald-500"] { background: var(--gold); }

@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { ExternalLink, FileText, Plus, Trash2, Upload } from 'lucide-react'
+import { ExternalLink, Trash2 } from '../components/Icons'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -122,9 +122,9 @@ async function getTusOffset(
 }
 
 /**
- * Sube el archivo usando TUS, el protocolo reanudable de Supabase Storage.
- * Esto evita depender de una única petición para PDFs y otros archivos grandes.
- */
+* Sube el archivo usando TUS, el protocolo reanudable de Supabase Storage.
+* Esto evita depender de una única petición para PDFs y otros archivos grandes.
+*/
 async function uploadWithSupabase(
   file: File,
   filePath: string,
@@ -415,8 +415,7 @@ export default function Documents() {
           : ''
 
         throw new Error(
-          `El archivo llegó a Storage, pero no se pudo confirmar el registro en la tabla documents: ${
-            insertError?.message || 'Supabase no devolvió la fila creada.'
+          `El archivo llegó a Storage, pero no se pudo confirmar el registro en la tabla documents: ${insertError?.message || 'Supabase no devolvió la fila creada.'
           }.${cleanupMessage}`,
         )
       }
@@ -511,13 +510,10 @@ export default function Documents() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-4 py-8 text-zinc-100 sm:px-6 lg:px-8">
+    <main className="text-zinc-100">
       <div className="mx-auto max-w-6xl">
         <header className="mb-8">
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-emerald-500/10 p-3 text-emerald-400">
-              <FileText size={24} />
-            </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Documentos</h1>
               <p className="mt-1 text-sm text-zinc-400">
@@ -541,7 +537,6 @@ export default function Documents() {
 
         <section className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-xl">
           <div className="mb-5 flex items-center gap-2">
-            <Plus size={20} className="text-emerald-400" />
             <h2 className="text-lg font-semibold">Subir documento</h2>
           </div>
 
@@ -640,7 +635,6 @@ export default function Documents() {
               disabled={uploading || !file || !title.trim()}
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Upload size={17} />
               {uploading ? `Subiendo ${uploadProgress}%...` : 'Subir documento'}
             </button>
           </form>
@@ -660,7 +654,6 @@ export default function Documents() {
             </div>
           ) : documents.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 p-10 text-center">
-              <FileText className="mx-auto mb-3 text-zinc-600" size={32} />
               <p className="text-zinc-400">Todavía no tienes documentos.</p>
             </div>
           ) : (
@@ -672,9 +665,6 @@ export default function Documents() {
                 >
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div className="flex min-w-0 items-start gap-3">
-                      <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400">
-                        <FileText size={20} />
-                      </div>
                       <div className="min-w-0">
                         <h3 className="break-words font-semibold text-zinc-100">{item.title}</h3>
                         <p className="mt-1 text-xs text-zinc-500">{item.category || 'General'}</p>
