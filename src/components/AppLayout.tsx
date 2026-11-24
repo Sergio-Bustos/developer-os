@@ -134,11 +134,15 @@ export default function AppLayout() {
         </nav>
 
         <div className="rail-user">
-          <div className="user-card">
+          <NavLink
+            to="/profile"
+            className={({ isActive }) => `user-card${isActive ? ' is-active' : ''}`}
+          >
             <p className="user-name">{displayName}</p>
 
             <p className="user-mail">{user?.email}</p>
-          </div>
+            <span className="user-profile-link">Perfil y cuenta</span>
+          </NavLink>
 
           <button onClick={handleSignOut} className="rail-out">
             Cerrar sesión

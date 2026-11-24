@@ -294,6 +294,8 @@ export default function Documents() {
   const { user } = useAuth()
   const [documents, setDocuments] = useState<DocumentItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [filterCategory, setFilterCategory] = useState('all')
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState('')
@@ -509,6 +511,15 @@ export default function Documents() {
     setSuccess('Documento eliminado correctamente.')
   }
 
+  const filteredDocuments = documents.filter((item) => {
+    const query = search.trim().toLowerCase()
+    const matchesSearch = !query || [item.title, item.description, item.file_type, item.category]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query))
+    const matchesCategory = filterCategory === 'all' || item.category === filterCategory
+    return matchesSearch && matchesCategory
+  })
+
   return (
     <main className="text-zinc-100">
       <div className="mx-auto max-w-6xl">
@@ -644,8 +655,29 @@ export default function Documents() {
           <div className="mb-4">
             <h2 className="text-xl font-semibold">Mis documentos</h2>
             <p className="text-sm text-zinc-500">
-              {documents.length} documento{documents.length === 1 ? '' : 's'}
+              {filteredDocuments.length} de {documents.length} documento{documents.length === 1 ? '' : 's'}
             </p>
+          </div>
+
+          <div className="mb-5 grid gap-3 md:grid-cols-[1fr_220px]">
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Buscar documentos..."
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 outline-none focus:border-emerald-500"
+            />
+            <select
+              value={filterCategory}
+              onChange={(event) => setFilterCategory(event.target.value)}
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 outline-none focus:border-emerald-500"
+            >
+              <option value="all">Todas las categorías</option>
+              <option value="general">General</option>
+              <option value="academic">Académico</option>
+              <option value="work">Trabajo</option>
+              <option value="project">Proyecto</option>
+              <option value="personal">Personal</option>
+            </select>
           </div>
 
           {loading ? (
@@ -656,9 +688,13 @@ export default function Documents() {
             <div className="rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 p-10 text-center">
               <p className="text-zinc-400">Todavía no tienes documentos.</p>
             </div>
+          ) : filteredDocuments.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 p-10 text-center">
+              <p className="text-zinc-400">No hay documentos que coincidan con el filtro.</p>
+            </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {documents.map((item) => (
+              {filteredDocuments.map((item) => (
                 <article
                   key={item.id}
                   className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 transition hover:border-zinc-700"

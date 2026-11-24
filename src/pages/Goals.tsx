@@ -383,6 +383,12 @@ export default function Goals() {
                   )
                   : 0
 
+              const isOverdue = Boolean(
+                goal.due_date &&
+                goal.status !== 'completed' &&
+                new Date(`${goal.due_date}T23:59:59`).getTime() < Date.now()
+              )
+
               return (
                 <div
                   key={goal.id}
@@ -436,9 +442,12 @@ export default function Goals() {
                   </div>
 
                   {goal.due_date && (
-                    <p className="mt-4 text-xs text-zinc-500">
-                      Fecha límite: {goal.due_date}
-                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <p className="text-xs text-zinc-500">Fecha límite: {goal.due_date}</p>
+                      {isOverdue && (
+                        <span className="rounded-full bg-red-500/10 px-2.5 py-1 text-xs text-red-300">Vencido</span>
+                      )}
+                    </div>
                   )}
 
                   {goal.status === 'completed' && (

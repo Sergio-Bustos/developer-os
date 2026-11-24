@@ -36,6 +36,8 @@ export default function Learning() {
   const [sessionTopic, setSessionTopic] = useState('')
   const [duration, setDuration] = useState('')
   const [notes, setNotes] = useState('')
+  const [editingProgress, setEditingProgress] = useState<string | null>(null)
+  const [progressDraft, setProgressDraft] = useState('')
 
   async function loadData() {
     if (!user) return
@@ -137,6 +139,48 @@ export default function Learning() {
       .delete()
       .eq('id', id)
       .eq('user_id', user?.id)
+
+    if (error) {
+      alert(error.message)
+      return
+    }
+
+    await loadData()
+  }
+
+  async function updateTopicProgress(topicId: string) {
+    if (!user) return
+    const progress = Math.min(Math.max(Number(progressDraft), 0), 100)
+    if (!Number.isFinite(progress)) return
+
+    const { error } = await supabase
+      .from('learning_topics')
+      .update({
+        progress,
+        status: progress >= 100 ? 'completed' : 'active',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', topicId)
+      .eq('user_id', user.id)
+
+    if (error) {
+      alert(error.message)
+      return
+    }
+
+    setEditingProgress(null)
+    setProgressDraft('')
+    await loadData()
+  }
+
+  async function deleteSession(id: string) {
+    if (!user || !confirm('¿Eliminar esta sesión de estudio?')) return
+
+    const { error } = await supabase
+      .from('study_sessions')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id)
 
     if (error) {
       alert(error.message)
@@ -386,8 +430,68 @@ export default function Learning() {
                     />
                   </div>
                 </div>
+
+                {editingProgress === topic.id ? (
+                  <div className="mt-4 flex gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={progressDraft}
+                      onChange={(event) => setProgressDraft(event.target.value)}
+                      className="min-w-0 flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white outline-none focus:border-zinc-500"
+                      placeholder="0-100"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => void updateTopicProgress(topic.id)}
+                      className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-black"
+                    >
+                      Guardar
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => { setEditingProgress(topic.id); setProgressDraft(String(topic.progress ?? 0)) }}
+                    className="mt-4 text-xs text-zinc-400 hover:text-white"
+                  >
+                    Actualizar progreso
+                  </button>
+                )}
               </div>
             ))}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-white">Sesiones recientes</h2>
+          <p className="text-sm text-zinc-500">Historial de tiempo dedicado a estudiar.</p>
+        </div>
+
+        {sessions.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-zinc-800 bg-zinc-900/50 p-8 text-center text-zinc-400">
+            Todavía no has registrado sesiones.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {sessions.slice(0, 10).map((session) => {
+              const topic = topics.find((item) => item.id === session.topic_id)
+              return (
+                <div key={session.id} className="flex items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+                  <div className="min-w-0">
+                    <p className="font-medium text-white">{topic?.title || topic?.name || 'Tema eliminado'}</p>
+                    <p className="mt-1 text-xs text-zinc-500">{session.session_date} · {session.duration_minutes} min</p>
+                    {session.notes && <p className="mt-2 text-sm text-zinc-400">{session.notes}</p>}
+                  </div>
+                  <button type="button" onClick={() => void deleteSession(session.id)} className="shrink-0 text-zinc-600 hover:text-red-400" title="Eliminar sesión">
+                    <Trash2 size={17} />
+                  </button>
+                </div>
+              )
+            })}
           </div>
         )}
       </section>

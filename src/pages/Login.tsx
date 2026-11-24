@@ -74,6 +74,10 @@ export default function Login() {
             />
           </div>
 
+          <p className="auth-register" style={{ marginTop: '-0.75rem', textAlign: 'right' }}>
+            <Link to="/forgot-password">¿Olvidaste tu contraseña?</Link>
+          </p>
+
           {error && <p className="auth-error">{error}</p>}
 
           <button type="submit" disabled={loading}>
