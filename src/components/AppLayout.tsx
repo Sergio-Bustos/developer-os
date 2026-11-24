@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import ThemeToggle from './ThemeToggle'
 
 const navigation = [
   {
@@ -106,13 +107,16 @@ export default function AppLayout() {
             <p className="brand-sub">Personal workspace</p>
           </div>
 
-          <button
-            onClick={handleSignOut}
-            className="rail-out-compact"
-            aria-label="Cerrar sesión"
-          >
-            Salir
-          </button>
+          <div className="rail-compact">
+            <ThemeToggle />
+            <button
+              onClick={handleSignOut}
+              className="rail-out-compact"
+              aria-label="Cerrar sesión"
+            >
+              Salir
+            </button>
+          </div>
         </div>
 
         <nav ref={navRef} className="rail-nav" aria-label="Principal">
@@ -144,9 +148,12 @@ export default function AppLayout() {
             <span className="user-profile-link">Perfil y cuenta</span>
           </NavLink>
 
-          <button onClick={handleSignOut} className="rail-out">
-            Cerrar sesión
-          </button>
+          <div className="rail-actions">
+            <button onClick={handleSignOut} className="rail-out">
+              Cerrar sesión
+            </button>
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
 

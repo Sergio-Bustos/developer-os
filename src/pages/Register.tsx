@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import '../App.css'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -48,6 +49,7 @@ export default function Register() {
 
   return (
     <main className="auth-page">
+      <ThemeToggle />
       <section className="auth-poster">
         <div className="auth-mark" aria-hidden="true">
           <svg viewBox="0 0 28 28" width="34" height="34" className="mark-bars">

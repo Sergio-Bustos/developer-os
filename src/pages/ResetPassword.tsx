@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import '../App.css'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
@@ -122,6 +123,7 @@ export default function ResetPassword() {
   if (checking) {
     return (
       <main className="auth-page">
+      <ThemeToggle />
         <section className="auth-poster">
           <div className="auth-mark" aria-hidden="true">
             <svg viewBox="0 0 28 28" width="34" height="34" className="mark-bars">
@@ -146,6 +148,7 @@ export default function ResetPassword() {
 
   return (
     <main className="auth-page">
+      <ThemeToggle />
       <section className="auth-poster">
         <div className="auth-mark" aria-hidden="true">
           <svg viewBox="0 0 28 28" width="34" height="34" className="mark-bars">

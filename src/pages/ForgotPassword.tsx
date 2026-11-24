@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import '../App.css'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
@@ -30,6 +31,7 @@ export default function ForgotPassword() {
 
   return (
     <main className="auth-page">
+      <ThemeToggle />
       <section className="auth-poster">
         <div className="auth-mark" aria-hidden="true">
           <svg viewBox="0 0 28 28" width="34" height="34" className="mark-bars">
