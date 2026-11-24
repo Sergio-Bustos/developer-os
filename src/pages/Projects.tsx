@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Plus, Trash2, ExternalLink } from 'lucide-react'
+import { Trash2, ExternalLink } from '../components/Icons'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -228,7 +228,6 @@ export default function Projects() {
             disabled={creating}
             className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 font-medium text-zinc-900 transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Plus size={18} />
             {creating ? 'Creando...' : 'Crear proyecto'}
           </button>
         </form>
@@ -271,7 +270,7 @@ export default function Projects() {
                     aria-label={`Eliminar ${project.name}`}
                     className="shrink-0 rounded-lg p-2 text-zinc-500 transition hover:bg-zinc-800 hover:text-red-400"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={17} />
                   </button>
                 </div>
 
@@ -292,8 +291,8 @@ export default function Projects() {
                     rel="noreferrer"
                     className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-zinc-300 transition hover:text-white"
                   >
-                    <ExternalLink size={16} />
                     GitHub
+                    <ExternalLink size={14} />
                   </a>
                 )}
               </article>

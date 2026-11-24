@@ -1,14 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-  Code2,
-  GitBranch,
-  GitCommit,
-  ExternalLink,
-  RefreshCw,
-  Unplug,
-  CheckCircle2,
-  AlertCircle,
-} from 'lucide-react'
+import { ExternalLink, RefreshCw } from '../components/Icons'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -35,6 +26,27 @@ type GithubRepo = {
 }
 
 const GITHUB_SCOPE = 'read:user repo'
+
+// Color de cada lenguaje (los mismos que usa GitHub)
+const LANGUAGE_COLORS: Record<string, string> = {
+  TypeScript: '#3178c6',
+  JavaScript: '#f1e05a',
+  Python: '#3572a5',
+  HTML: '#e34c26',
+  CSS: '#663399',
+  Java: '#b07219',
+  'C#': '#178600',
+  'C++': '#f34b7d',
+  C: '#555555',
+  PHP: '#4f5d95',
+  Go: '#00add8',
+  Rust: '#dea584',
+  Shell: '#89e051',
+  Vue: '#41b883',
+  Dart: '#00b4ab',
+  Kotlin: '#a97bff',
+  Swift: '#f05138',
+}
 
 export default function GithubPage() {
   const { user } = useAuth()
@@ -256,205 +268,161 @@ export default function GithubPage() {
   }, [user?.id])
 
   if (loading) {
-    return (
-      <div className="p-6 text-zinc-400">
-        Cargando integración de GitHub...
-      </div>
-    )
+    return <p className="gh-loading">Cargando integración de GitHub...</p>
   }
 
-  return (
-    <div className="min-h-full p-6 md:p-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="mb-2 flex items-center gap-3">
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-3">
-                <Code2 size={25} />
-              </div>
-              <h1 className="text-3xl font-bold text-white">GitHub</h1>
-            </div>
-            <p className="text-zinc-400">
-              Conecta GitHub y sincroniza tus repositorios con Developer OS.
-            </p>
-          </div>
+  const privateCount = repos.filter((repo) => repo.private).length
 
-          {connected ? (
-            <button
-              onClick={disconnectGithub}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-900/60 bg-red-950/30 px-4 py-2 text-sm font-medium text-red-300 hover:bg-red-950/50"
-            >
-              <Unplug size={17} />
-              Desconectar
-            </button>
-          ) : (
-            <button
-              onClick={connectGithub}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-zinc-200"
-            >
-              <Code2 size={18} />
-              Conectar GitHub
-            </button>
-          )}
+  return (
+    <div className="gh">
+      <header className="gh-head">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-white">GitHub</h1>
+          <p className="mt-2 text-zinc-400">
+            Conecta GitHub y sincroniza tus repositorios con Developer OS.
+          </p>
         </div>
 
-        {error && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-900/60 bg-red-950/30 p-4 text-sm text-red-300">
-            <AlertCircle size={18} className="mt-0.5 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl border border-emerald-900/60 bg-emerald-950/30 p-4 text-sm text-emerald-300">
-            <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
-            <span>{success}</span>
-          </div>
-        )}
-
-        {!connected ? (
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8 text-center">
-            <Code2 size={48} className="mx-auto mb-4 text-zinc-500" />
-            <h2 className="mb-2 text-xl font-semibold text-white">
-              GitHub no está conectado
-            </h2>
-            <p className="mx-auto mb-6 max-w-lg text-sm text-zinc-400">
-              Conecta tu cuenta para consultar tus repositorios y comenzar a
-              sincronizar tu actividad con Developer OS.
-            </p>
-            <button
-              onClick={connectGithub}
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black"
-            >
-              <Code2 size={18} />
-              Conectar GitHub
-            </button>
-          </div>
+        {connected ? (
+          <button onClick={disconnectGithub} className="btn-quiet btn-danger">
+            Desconectar
+          </button>
         ) : (
-          <>
-            <div className="mb-6 rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
-                    <Code2 size={24} />
-                  </div>
-
-                  <div>
-                    <p className="font-semibold text-white">
-                      @{connection?.github_username || 'GitHub'}
-                    </p>
-                    <p className="text-sm text-zinc-500">
-                      Cuenta conectada
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={loadRepositories}
-                  disabled={loadingRepos}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
-                >
-                  <RefreshCw
-                    size={16}
-                    className={loadingRepos ? 'animate-spin' : ''}
-                  />
-                  {loadingRepos ? 'Sincronizando...' : 'Sincronizar repositorios'}
-                </button>
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5">
-                <p className="text-sm text-zinc-500">Repositorios</p>
-                <p className="mt-2 text-3xl font-bold text-white">
-                  {repos.length}
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5">
-                <p className="text-sm text-zinc-500">Privados</p>
-                <p className="mt-2 text-3xl font-bold text-white">
-                  {repos.filter((repo) => repo.private).length}
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5">
-                <p className="text-sm text-zinc-500">Públicos</p>
-                <p className="mt-2 text-3xl font-bold text-white">
-                  {repos.filter((repo) => !repo.private).length}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-              <div className="mb-5 flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-semibold text-white">
-                    Repositorios
-                  </h2>
-                  <p className="text-sm text-zinc-500">
-                    Repositorios disponibles en tu cuenta de GitHub.
-                  </p>
-                </div>
-              </div>
-
-              {repos.length === 0 ? (
-                <div className="py-10 text-center text-sm text-zinc-500">
-                  Todavía no hay repositorios sincronizados.
-                </div>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {repos.map((repo) => (
-                    <div
-                      key={repo.id}
-                      className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-5"
-                    >
-                      <div className="mb-3 flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h3 className="truncate font-semibold text-white">
-                            {repo.name}
-                          </h3>
-                          <p className="mt-1 text-xs text-zinc-500">
-                            {repo.private ? 'Privado' : 'Público'} ·{' '}
-                            {repo.default_branch}
-                          </p>
-                        </div>
-
-                        <a
-                          href={repo.html_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="shrink-0 text-zinc-500 hover:text-white"
-                          title="Abrir en GitHub"
-                        >
-                          <ExternalLink size={17} />
-                        </a>
-                      </div>
-
-                      <p className="mb-4 min-h-10 text-sm text-zinc-400">
-                        {repo.description || 'Sin descripción.'}
-                      </p>
-
-                      <div className="flex flex-wrap gap-4 text-xs text-zinc-500">
-                        <span className="inline-flex items-center gap-1.5">
-                          <GitBranch size={14} />
-                          {repo.language || 'Sin lenguaje'}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <GitCommit size={14} />
-                          {repo.default_branch}
-                        </span>
-                        <span>★ {repo.stargazers_count}</span>
-                        <span>Forks {repo.forks_count}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
+          <button onClick={connectGithub} className="btn-main bg-white">
+            Conectar GitHub
+          </button>
         )}
-      </div>
+      </header>
+
+      {error && (
+        <div role="alert" className="note note-error">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div role="status" className="note note-ok">
+          {success}
+        </div>
+      )}
+
+      {!connected ? (
+        <section className="gh-empty">
+          <h2>GitHub no está conectado</h2>
+          <p>
+            Conecta tu cuenta para consultar tus repositorios y comenzar a
+            sincronizar tu actividad con Developer OS.
+          </p>
+          <button onClick={connectGithub} className="btn-main bg-white">
+            Conectar GitHub
+          </button>
+        </section>
+      ) : (
+        <>
+          <section className="gh-account">
+            <div className="gh-user">
+              <span className="gh-avatar" aria-hidden="true">
+                {(connection?.github_username || 'G').charAt(0).toUpperCase()}
+              </span>
+
+              <div className="min-w-0">
+                <p className="gh-handle">
+                  @{connection?.github_username || 'GitHub'}
+                </p>
+                <p className="gh-sub">Cuenta conectada</p>
+              </div>
+            </div>
+
+            <button
+              onClick={loadRepositories}
+              disabled={loadingRepos}
+              className="btn-quiet"
+            >
+              <RefreshCw size={15} className={loadingRepos ? 'animate-spin' : ''} />
+              {loadingRepos ? 'Sincronizando...' : 'Sincronizar repositorios'}
+            </button>
+          </section>
+
+          <section className="gh-stats">
+            <div>
+              <p className="gh-stat-n">{repos.length}</p>
+              <p className="gh-stat-l">Repositorios</p>
+            </div>
+            <div>
+              <p className="gh-stat-n">{privateCount}</p>
+              <p className="gh-stat-l">Privados</p>
+            </div>
+            <div>
+              <p className="gh-stat-n">{repos.length - privateCount}</p>
+              <p className="gh-stat-l">Públicos</p>
+            </div>
+          </section>
+
+          <section>
+            <div className="gh-list-head">
+              <h2>Repositorios</h2>
+              <p>Repositorios disponibles en tu cuenta de GitHub.</p>
+            </div>
+
+            {repos.length === 0 ? (
+              <p className="gh-none">Todavía no hay repositorios sincronizados.</p>
+            ) : (
+              <ul className="repo-list">
+                {repos.map((repo) => (
+                  <li key={repo.id} className="repo">
+                    <div className="repo-top">
+                      <div className="min-w-0">
+                        <h3 className="repo-name">{repo.name}</h3>
+                        <p className="repo-meta">
+                          {repo.private ? 'Privado' : 'Público'} · {repo.default_branch}
+                        </p>
+                      </div>
+
+                      <a
+                        href={repo.html_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="repo-link"
+                        title="Abrir en GitHub"
+                        aria-label={`Abrir ${repo.name} en GitHub`}
+                      >
+                        <ExternalLink size={17} />
+                      </a>
+                    </div>
+
+                    <p className="repo-desc">
+                      {repo.description || 'Sin descripción.'}
+                    </p>
+
+                    <dl className="repo-stats">
+                      <div className="repo-lang">
+                        <span
+                          className="lang-dot"
+                          style={{
+                            background: repo.language
+                              ? LANGUAGE_COLORS[repo.language] || '#8b98a3'
+                              : 'transparent',
+                            borderColor: repo.language ? 'transparent' : undefined,
+                          }}
+                        />
+                        <dd>{repo.language || 'Sin lenguaje'}</dd>
+                      </div>
+                      <div>
+                        <dt>Estrellas</dt>
+                        <dd>{repo.stargazers_count}</dd>
+                      </div>
+                      <div>
+                        <dt>Forks</dt>
+                        <dd>{repo.forks_count}</dd>
+                      </div>
+                    </dl>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </>
+      )}
     </div>
   )
 }

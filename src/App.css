@@ -14,17 +14,16 @@
 @media (min-width: 900px) { .auth-poster { padding: 3rem 3.2rem 3.4rem; } }
 .auth-mark { color: var(--bone-2); display: grid; width: fit-content; }
 .auth-statement {
-  max-width: 13em; font-family: var(--f-display); color: var(--bone); text-wrap: balance;
-  font-size: clamp(1.9rem, 6vw, 2.6rem); line-height: 1.04; letter-spacing: -.01em;
+  max-width: 9em; font-family: var(--f-display); font-weight: 900; color: var(--bone); text-wrap: balance;
+  font-size: clamp(2.6rem, 11vw, 3.6rem); line-height: .92; letter-spacing: -.012em;
   animation: veil 1.3s var(--ease) .15s both;
 }
-@media (min-width: 900px) { .auth-statement { font-size: clamp(3rem, 5.4vw, 5.2rem); line-height: .98; } }
+@media (min-width: 900px) { .auth-statement { font-size: clamp(3.8rem, 7vw, 7rem); line-height: .88; } }
 
 /* Tarjeta del formulario */
 .auth-card {
   align-self: center; justify-self: center; width: calc(100% - 2.8rem); max-width: 26rem; margin: 1.6rem 0 2.4rem; padding: 2.1rem 1.8rem;
-  border: 1px solid var(--line-2); border-radius: 22px; background: rgba(10, 16, 22, .82);
-  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .8);
+  border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface);
   animation: rise 1s var(--ease) .1s both;
 }
 @media (min-width: 900px) { .auth-card { width: 100%; margin: 3rem 3.2rem 3rem 0; justify-self: end; } }
@@ -34,15 +33,15 @@
 .auth-card > :nth-child(3) { animation-delay: .4s; }
 .auth-card > :nth-child(4) { animation-delay: .5s; }
 
-.auth-card h1 { margin: 0; font-size: .95rem; font-weight: 600; letter-spacing: .02em; color: var(--gold); }
-.auth-card h2 { margin: .3rem 0 1.9rem; font-family: var(--f-display); font-weight: 400; font-size: 2.6rem; line-height: 1; color: var(--bone); }
+.auth-card h1 { margin: 0; font-family: var(--f-display); font-size: 1.3rem; font-weight: 800; letter-spacing: .02em; color: var(--gold); }
+.auth-card h2 { margin: .2rem 0 2rem; font-family: var(--f-display); font-weight: 900; font-size: 3.4rem; line-height: .9; color: var(--bone); }
 
 .form-group { position: relative; margin-bottom: 1.4rem; }
-.form-group label { display: block; margin-bottom: .2rem; font-size: .85rem; color: var(--bone-2); transition: color .3s; }
+.form-group label { display: block; margin-bottom: .2rem; font-size: .98rem; font-style: italic; color: var(--bone-2); transition: color .3s; }
 .form-group:focus-within label { color: var(--gold); }
 .form-group input {
   width: 100%; padding: .65rem 0; border: 0; border-bottom: 1px solid var(--line-2); border-radius: 0;
-  background: transparent; color: var(--bone); font-size: 1.05rem; outline: none;
+  background: transparent; color: var(--bone); font-size: 1.15rem; outline: none;
 }
 .form-group::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
@@ -54,8 +53,8 @@
 .auth-card button {
   position: relative; overflow: hidden; width: 100%; margin-top: .5rem; padding: .95rem 1.2rem; border: 0; border-radius: 999px;
   background: linear-gradient(120deg, var(--gold), var(--gold-2), var(--gold)); background-size: 200% 100%;
-  color: #1a1205; font-size: 1rem; font-weight: 600; cursor: pointer;
-  box-shadow: 0 14px 30px -16px rgba(240, 180, 90, .8);
+  color: #1a1205; font-family: var(--f-display); font-size: 1.3rem; font-weight: 800; letter-spacing: .02em; cursor: pointer;
+  box-shadow: 0 14px 30px -16px rgba(240, 180, 90, .7);
   transition: transform .3s var(--ease), box-shadow .4s, background-position .6s var(--ease);
 }
 .auth-card button:not(:disabled):hover { background-position: 100% 0; transform: translateY(-2px); box-shadow: 0 18px 34px -14px rgba(240, 180, 90, .9); }

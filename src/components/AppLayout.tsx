@@ -1,58 +1,39 @@
 import { useLayoutEffect, useRef } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import {
-  BarChart3,
-  BookOpen,
-  FolderKanban,
-  LayoutDashboard,
-  LogOut,
-  Target,
-  CheckSquare,
-  FileText,
-  GitBranch,
-} from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const navigation = [
   {
     name: 'Dashboard',
     path: '/dashboard',
-    icon: LayoutDashboard,
   },
   {
     name: 'Projects',
     path: '/projects',
-    icon: FolderKanban,
   },
   {
     name: 'Tasks',
     path: '/tasks',
-    icon: CheckSquare,
   },
   {
     name: 'Learning',
     path: '/learning',
-    icon: BookOpen,
   },
   {
     name: 'Goals',
     path: '/goals',
-    icon: Target,
   },
   {
     name: 'Documents',
     path: '/documents',
-    icon: FileText,
   },
   {
     name: 'GitHub',
     path: '/github',
-    icon: GitBranch,
   },
   {
     name: 'Metrics',
     path: '/metrics',
-    icon: BarChart3,
   },
 ]
 
@@ -67,7 +48,6 @@ export default function AppLayout() {
   }
 
   const displayName = String(user?.user_metadata?.display_name || 'Developer')
-  const initial = displayName.trim().charAt(0).toUpperCase() || 'D'
 
   // El indicador de la sección activa se desliza entre opciones
   useLayoutEffect(() => {
@@ -113,19 +93,10 @@ export default function AppLayout() {
       <aside className="rail">
         <div className="rail-brand">
           <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 32 32" width="30" height="30">
-              <circle
-                cx="16"
-                cy="16"
-                r="12"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeDasharray="52 24"
-                strokeLinecap="round"
-                className="mark-ring"
-              />
-              <circle cx="16" cy="16" r="4.2" className="mark-core" />
+            <svg viewBox="0 0 28 28" width="26" height="26" className="mark-bars">
+              <rect x="2" y="4" width="24" height="4" />
+              <rect x="2" y="12" width="17" height="4" />
+              <rect x="2" y="20" width="10" height="4" />
             </svg>
           </span>
 
@@ -140,7 +111,7 @@ export default function AppLayout() {
             className="rail-out-compact"
             aria-label="Cerrar sesión"
           >
-            <LogOut size={18} />
+            Salir
           </button>
         </div>
 
@@ -148,8 +119,6 @@ export default function AppLayout() {
           <span ref={indicatorRef} className="nav-ind" aria-hidden="true" />
 
           {navigation.map((item) => {
-            const Icon = item.icon
-
             return (
               <NavLink
                 key={item.path}
@@ -158,8 +127,7 @@ export default function AppLayout() {
                   `rail-link${isActive ? ' is-active' : ''}`
                 }
               >
-                <Icon size={18} />
-                <span>{item.name}</span>
+                {item.name}
               </NavLink>
             )
           })}
@@ -167,19 +135,12 @@ export default function AppLayout() {
 
         <div className="rail-user">
           <div className="user-card">
-            <span className="avatar" aria-hidden="true">
-              {initial}
-            </span>
+            <p className="user-name">{displayName}</p>
 
-            <div className="min-w-0">
-              <p className="user-name">{displayName}</p>
-
-              <p className="user-mail">{user?.email}</p>
-            </div>
+            <p className="user-mail">{user?.email}</p>
           </div>
 
           <button onClick={handleSignOut} className="rail-out">
-            <LogOut size={18} />
             Cerrar sesión
           </button>
         </div>

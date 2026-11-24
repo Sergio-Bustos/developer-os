@@ -4,6 +4,7 @@ import './index.css'
 import './ui-shell.css'
 import './ui-dashboard.css'
 import './ui-pages.css'
+import './ui-github.css'
 import App from './App.tsx'
 import { initClickSound } from './lib/clickSound'
 

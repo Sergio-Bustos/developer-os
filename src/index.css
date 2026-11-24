@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 /* ============================================================
-   DEVELOPER OS — "Luz de escritorio"
-   Un taller nocturno: tinta azul-verdosa, papel hueso y una sola
-   fuente de luz cálida (la lámpara). Los colores de Tailwind se
-   re-tiñen aquí, así todas las pantallas heredan la misma paleta
-   sin tocar su código.
+   DEVELOPER OS — sistema de diseño
+   Tinta azul-verdosa, papel hueso y una sola luz cálida (dorado).
+   Tipos: Big Shoulders Display (títulos, cifras, botones) y
+   Newsreader (texto). Los colores de Tailwind se re-tiñen aquí,
+   así todas las pantallas heredan la misma paleta.
    ============================================================ */
 
 @theme {
-  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+  --font-display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
 
   --color-white: #f3eee3;
   --color-black: #05080c;
@@ -49,7 +49,7 @@
   --coral: #ee7b5c;
   --teal: #62c9bd;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --f-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --f-display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
   font-family: var(--font-sans);
   color: var(--bone);
   background: var(--bg);
@@ -62,10 +62,14 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  font-size: 17px;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  overflow-x: clip;
+  line-height: 1.6;
   min-width: 320px;
   min-height: 100vh;
   background: var(--bg);

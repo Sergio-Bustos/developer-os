@@ -7,7 +7,11 @@ export default function ProtectedRoute() {
   if (loading) {
     return (
       <div className="splash" role="status">
-        <span className="splash-mark" aria-hidden="true" />
+        <span className="splash-mark" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
         <p>Cargando Developer OS...</p>
       </div>
     )

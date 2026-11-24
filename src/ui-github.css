@@ -1,0 +1,53 @@
+/* ============================================================
+   DEVELOPER OS — GitHub: cuenta y repositorios
+   Pensado primero para celular: una columna, nada se desborda.
+   ============================================================ */
+.gh { display: grid; gap: 1.8rem; min-width: 0; }
+.gh-loading { color: var(--mute); font-style: italic; }
+.gh-head { display: flex; flex-direction: column; align-items: flex-start; gap: 1.2rem; }
+@media (min-width: 768px) { .gh-head { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
+.gh .note { margin: 0; }
+
+.gh-empty { padding: clamp(1.8rem, 5vw, 3rem); border: 1px dashed var(--line-2); border-radius: 6px; }
+.gh-empty h2 { font-family: var(--f-display); font-weight: 800; font-size: 2.2rem; line-height: 1; color: var(--bone); }
+.gh-empty p { max-width: 32em; margin: .8rem 0 1.6rem; color: var(--bone-2); }
+
+.gh-account { display: flex; flex-direction: column; gap: 1.1rem; padding: 1.2rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+@media (min-width: 640px) { .gh-account { flex-direction: row; align-items: center; justify-content: space-between; } }
+.gh-user { display: flex; align-items: center; gap: 1rem; min-width: 0; }
+.gh-avatar { flex: none; display: grid; place-items: center; width: 3.2rem; height: 3.2rem; border-radius: 4px; background: var(--raised); border: 1px solid var(--line-2); font-family: var(--f-display); font-weight: 900; font-size: 1.9rem; line-height: 1; color: var(--gold); }
+.gh-handle { font-family: var(--f-display); font-weight: 800; font-size: 1.6rem; line-height: 1; color: var(--bone); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gh-sub { margin-top: .2rem; font-size: .95rem; font-style: italic; color: var(--mute); }
+.gh-account .btn-quiet { align-self: stretch; }
+@media (min-width: 640px) { .gh-account .btn-quiet { align-self: auto; } }
+
+/* Cifras: números grandes con una regla de color arriba */
+.gh-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.8rem, 3vw, 2rem); }
+.gh-stats > div { padding-top: .9rem; border-top: 3px solid var(--bone-2); }
+.gh-stats > div:nth-child(2) { border-top-color: var(--gold); }
+.gh-stats > div:nth-child(3) { border-top-color: var(--teal); }
+.gh-stat-n { font-family: var(--f-display); font-weight: 900; font-size: clamp(2.6rem, 8vw, 4.4rem); line-height: .9; color: var(--bone); font-variant-numeric: tabular-nums; }
+.gh-stat-l { margin-top: .5rem; font-size: .98rem; font-style: italic; color: var(--mute); }
+
+.gh-list-head h2 { font-family: var(--f-display); font-weight: 800; font-size: 2.3rem; line-height: 1; color: var(--bone); }
+.gh-list-head p { margin-top: .4rem; color: var(--mute); }
+.gh-none { margin-top: 1.4rem; padding: 2rem 0; color: var(--mute); font-style: italic; border-top: 1px solid var(--line-2); }
+
+/* Lista de repositorios: una columna en celular, dos en pantallas anchas */
+.repo-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+@media (min-width: 900px) { .repo-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.repo { min-width: 0; display: flex; flex-direction: column; gap: .8rem; padding: 1.3rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); transition: border-color .4s, transform .5s var(--ease); animation: rise .7s var(--ease) both; animation-delay: calc(var(--k, 0) * 50ms); }
+.repo:hover { border-color: var(--line-2); transform: translateY(-3px); }
+.repo-list > :nth-child(2) { --k: 1; } .repo-list > :nth-child(3) { --k: 2; } .repo-list > :nth-child(4) { --k: 3; } .repo-list > :nth-child(n+5) { --k: 4; }
+.repo-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem; }
+.repo-name { font-family: var(--f-display); font-weight: 800; font-size: 1.7rem; line-height: 1; color: var(--bone); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repo-meta { margin-top: .3rem; font-size: .92rem; font-style: italic; color: var(--mute); }
+.repo-link { flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; margin: -.5rem -.5rem 0 0; color: var(--mute); transition: color .25s, transform .4s var(--ease); }
+.repo-link:hover { color: var(--gold); transform: translate(2px, -2px); }
+.repo-desc { color: var(--bone-2); font-size: 1.02rem; line-height: 1.55; overflow-wrap: anywhere; }
+.repo-stats { display: flex; flex-wrap: wrap; gap: .45rem 1.4rem; margin: auto 0 0; padding-top: .9rem; border-top: 1px solid var(--line); font-size: .98rem; }
+.repo-stats > div { display: flex; align-items: baseline; gap: .4rem; min-width: 0; }
+.repo-stats dt { color: var(--mute); font-style: italic; }
+.repo-stats dd { margin: 0; color: var(--bone); }
+.repo-lang { align-items: center !important; }
+.lang-dot { flex: none; width: .7rem; height: .7rem; border-radius: 50%; border: 1px solid var(--line-2); }

@@ -50,20 +50,11 @@ export default function Register() {
     <main className="auth-page">
       <section className="auth-poster">
         <div className="auth-mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="34" height="34">
-            <circle
-              cx="16"
-              cy="16"
-              r="12"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeDasharray="52 24"
-              strokeLinecap="round"
-              className="mark-ring"
-            />
-            <circle cx="16" cy="16" r="4.2" className="mark-core" />
-          </svg>
+          <svg viewBox="0 0 28 28" width="34" height="34" className="mark-bars">
+              <rect x="2" y="4" width="24" height="4" />
+              <rect x="2" y="12" width="17" height="4" />
+              <rect x="2" y="20" width="10" height="4" />
+            </svg>
         </div>
 
         <p className="auth-statement">

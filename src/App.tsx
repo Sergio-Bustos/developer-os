@@ -12,13 +12,11 @@ import Github from './pages/Github'
 import AuthCallback from './pages/AuthCallback'
 import ProtectedRoute from './components/ProtectedRoute'
 import AppLayout from './components/AppLayout'
-import Atmosphere from './components/Atmosphere'
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Atmosphere />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

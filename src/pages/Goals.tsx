@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Plus, Target, Trash2, TrendingUp } from 'lucide-react'
+import { Trash2 } from '../components/Icons'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -156,13 +156,11 @@ export default function Goals() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-          <Target className="mb-3 text-zinc-400" size={22} />
           <p className="text-sm text-zinc-500">Objetivos</p>
           <p className="mt-1 text-3xl font-bold text-white">{goals.length}</p>
         </div>
 
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-          <TrendingUp className="mb-3 text-zinc-400" size={22} />
           <p className="text-sm text-zinc-500">Activos</p>
           <p className="mt-1 text-3xl font-bold text-white">
             {goals.filter((goal) => goal.status === 'active').length}
@@ -170,7 +168,6 @@ export default function Goals() {
         </div>
 
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-          <Target className="mb-3 text-zinc-400" size={22} />
           <p className="text-sm text-zinc-500">Completados</p>
           <p className="mt-1 text-3xl font-bold text-white">
             {goals.filter((goal) => goal.status === 'completed').length}
@@ -184,7 +181,6 @@ export default function Goals() {
           className="rounded-xl border border-zinc-800 bg-zinc-900 p-6"
         >
           <div className="mb-5 flex items-center gap-3">
-            <Plus size={20} className="text-zinc-400" />
             <div>
               <h2 className="font-semibold text-white">Nuevo objetivo</h2>
               <p className="text-sm text-zinc-500">
@@ -273,7 +269,6 @@ export default function Goals() {
               type="submit"
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 font-medium text-black transition hover:bg-zinc-200"
             >
-              <Plus size={18} />
               Crear objetivo
             </button>
           </div>
@@ -284,7 +279,6 @@ export default function Goals() {
           className="rounded-xl border border-zinc-800 bg-zinc-900 p-6"
         >
           <div className="mb-5 flex items-center gap-3">
-            <TrendingUp size={20} className="text-zinc-400" />
             <div>
               <h2 className="font-semibold text-white">Registrar progreso</h2>
               <p className="text-sm text-zinc-500">
@@ -351,7 +345,6 @@ export default function Goals() {
               disabled={goals.filter((goal) => goal.status === 'active').length === 0}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-800 px-4 py-3 font-medium text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <TrendingUp size={18} />
               Registrar progreso
             </button>
           </div>
@@ -372,7 +365,6 @@ export default function Goals() {
           </div>
         ) : goals.length === 0 ? (
           <div className="rounded-xl border border-dashed border-zinc-800 bg-zinc-900/50 p-8 text-center">
-            <Target size={28} className="mx-auto mb-3 text-zinc-600" />
             <p className="text-zinc-400">
               Todavía no tienes objetivos.
             </p>
@@ -383,12 +375,12 @@ export default function Goals() {
               const percentage =
                 goal.target_value > 0
                   ? Math.min(
-                      Math.max(
-                        (goal.current_value / goal.target_value) * 100,
-                        0
-                      ),
-                      100
-                    )
+                    Math.max(
+                      (goal.current_value / goal.target_value) * 100,
+                      0
+                    ),
+                    100
+                  )
                   : 0
 
               return (
