@@ -41,6 +41,7 @@ export default function Tasks() {
     const { data, error } = await supabase
       .from('tasks')
       .select('*')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -56,6 +57,7 @@ export default function Tasks() {
     const { data, error } = await supabase
       .from('projects')
       .select('id, name')
+      .eq('user_id', user.id)
       .order('name')
 
     if (error) {
@@ -124,10 +126,13 @@ export default function Tasks() {
   }
 
   async function handleDelete(id: string) {
+    if (!user) return
+
     const { error } = await supabase
       .from('tasks')
       .delete()
       .eq('id', id)
+      .eq('user_id', user.id)
 
     if (error) {
       setError(error.message)

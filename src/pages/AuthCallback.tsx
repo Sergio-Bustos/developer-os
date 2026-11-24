@@ -27,7 +27,7 @@ export default function AuthCallback() {
           window.location.pathname,
         )
 
-        navigate('/github', { replace: true })
+        navigate('/github', { replace: true, state: { githubOAuth: true } })
         return
       }
 
@@ -43,7 +43,7 @@ export default function AuthCallback() {
         }
 
         if (retryData.session) {
-          navigate('/github', { replace: true })
+          navigate('/github', { replace: true, state: { githubOAuth: true } })
         } else if (active) {
           setError('No se pudo completar la conexión con GitHub.')
         }

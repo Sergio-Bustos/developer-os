@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ExternalLink, RefreshCw } from '../components/Icons'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -50,6 +51,10 @@ const LANGUAGE_COLORS: Record<string, string> = {
 
 export default function GithubPage() {
   const { user } = useAuth()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const isGithubOAuthReturn =
+    (location.state as { githubOAuth?: boolean } | null)?.githubOAuth === true
 
   const [connection, setConnection] = useState<GithubConnection | null>(null)
   const [repos, setRepos] = useState<GithubRepo[]>([])
@@ -161,14 +166,27 @@ export default function GithubPage() {
       currentUser.user_metadata?.preferred_username ||
       null
 
+    const { data: existingConnection, error: existingConnectionError } = await supabase
+      .from('github_connections')
+      .select('connected_at, updated_at')
+      .eq('user_id', currentUser.id)
+      .maybeSingle()
+
+    if (existingConnectionError) {
+      setError(existingConnectionError.message)
+      return
+    }
+
+    const now = new Date().toISOString()
+
     const { data, error: upsertError } = await supabase
       .from('github_connections')
       .upsert(
         {
           user_id: currentUser.id,
           github_username: githubUsername,
-          connected_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          connected_at: existingConnection?.connected_at || now,
+          updated_at: existingConnection?.updated_at || now,
         },
         { onConflict: 'user_id' },
       )
@@ -272,6 +290,21 @@ export default function GithubPage() {
           }
         }
 
+        const { data: updatedConnection, error: timestampError } = await supabase
+          .from('github_connections')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('user_id', user.id)
+          .select('id, user_id, github_username, connected_at, updated_at')
+          .single()
+
+        if (timestampError) {
+          throw new Error(
+            `Los repositorios se guardaron, pero no se pudo actualizar la fecha de sincronización: ${timestampError.message}`,
+          )
+        }
+
+        setConnection(updatedConnection)
+
         if (newRepos.length > 0) {
           setSuccess(
             newRepos.length === 1
@@ -312,15 +345,9 @@ export default function GithubPage() {
       await loadConnection()
       await loadSavedRepositories()
 
-      const { data } = await supabase.auth.getSession()
-      const hasGithubIdentity = Boolean(
-        data.session?.user?.identities?.some(
-          (identity) => identity.provider === 'github',
-        ),
-      )
-
-      if (active && hasGithubIdentity) {
+      if (active && isGithubOAuthReturn) {
         await saveConnectionAfterOAuth()
+        navigate('/github', { replace: true, state: null })
       }
     }
 
@@ -329,7 +356,7 @@ export default function GithubPage() {
     return () => {
       active = false
     }
-  }, [user?.id])
+  }, [user?.id, isGithubOAuthReturn, navigate])
 
   if (loading) {
     return <p className="gh-loading">Cargando integración de GitHub...</p>
@@ -394,6 +421,14 @@ export default function GithubPage() {
                   @{connection?.github_username || 'GitHub'}
                 </p>
                 <p className="gh-sub">Cuenta conectada</p>
+                {connection?.updated_at && (
+                  <p className="mt-1 text-xs text-zinc-500">
+                    Última sincronización: {new Intl.DateTimeFormat('es-CO', {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    }).format(new Date(connection.updated_at))}
+                  </p>
+                )}
               </div>
             </div>
 
