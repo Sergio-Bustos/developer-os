@@ -15,69 +15,71 @@ export default function ResetPassword() {
 
   useEffect(() => {
     let active = true
-
-    async function prepareRecovery() {
-      try {
-        const url = new URL(window.location.href)
-        const code = url.searchParams.get('code')
-
-        if (code) {
-          const { error: exchangeError } =
-            await supabase.auth.exchangeCodeForSession(code)
-
-          if (exchangeError) {
-            if (active) {
-              setError('El enlace de recuperación no es válido o ya expiró.')
-              setReady(false)
-            }
-            return
-          }
-
-          window.history.replaceState(
-            {},
-            document.title,
-            `${window.location.origin}${window.location.pathname}`,
-          )
-        }
-
-        const { data, error: sessionError } =
-          await supabase.auth.getSession()
-
-        if (!active) return
-
-        if (sessionError || !data.session) {
-          setError('El enlace de recuperación no es válido o ya expiró.')
-          setReady(false)
-        } else {
-          setError('')
-          setReady(true)
-        }
-      } catch {
-        if (active) {
-          setError('No se pudo validar el enlace de recuperación.')
-          setReady(false)
-        }
-      } finally {
-        if (active) setChecking(false)
-      }
-    }
-
-    void prepareRecovery()
+    let timeoutId: number | undefined
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (!active) return
 
-      if (event === 'PASSWORD_RECOVERY' && session) {
+      if (session && (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
         setReady(true)
         setError('')
         setChecking(false)
       }
     })
 
+    async function checkSession() {
+      try {
+        const { data, error: sessionError } = await supabase.auth.getSession()
+
+        if (!active) return
+
+        if (sessionError) {
+          setError('No se pudo validar el enlace de recuperación.')
+          setReady(false)
+          setChecking(false)
+          return
+        }
+
+        if (data.session) {
+          setReady(true)
+          setError('')
+          setChecking(false)
+          return
+        }
+
+        // Supabase puede estar terminando de procesar el código PKCE
+        // que llegó en la URL. Esperamos un poco antes de marcarlo como inválido.
+        timeoutId = window.setTimeout(async () => {
+          const { data: retry } = await supabase.auth.getSession()
+
+          if (!active) return
+
+          if (retry.session) {
+            setReady(true)
+            setError('')
+          } else {
+            setReady(false)
+            setError('El enlace de recuperación no es válido o ya expiró.')
+          }
+
+          setChecking(false)
+        }, 1500)
+      } catch {
+        if (active) {
+          setError('No se pudo validar el enlace de recuperación.')
+          setReady(false)
+          setChecking(false)
+        }
+      }
+    }
+
+    void checkSession()
+
     return () => {
       active = false
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
       subscription.unsubscribe()
     }
   }, [])
@@ -98,8 +100,11 @@ export default function ResetPassword() {
     }
 
     setLoading(true)
-    const { error: updateError } =
-      await supabase.auth.updateUser({ password })
+
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
+    })
+
     setLoading(false)
 
     if (updateError) {
@@ -108,7 +113,10 @@ export default function ResetPassword() {
     }
 
     setMessage('Contraseña actualizada correctamente. Redirigiendo...')
-    window.setTimeout(() => navigate('/dashboard', { replace: true }), 1200)
+
+    window.setTimeout(() => {
+      navigate('/dashboard', { replace: true })
+    }, 1200)
   }
 
   if (checking) {
@@ -122,7 +130,9 @@ export default function ResetPassword() {
               <rect x="2" y="20" width="10" height="4" />
             </svg>
           </div>
-          <p className="auth-statement">Define una nueva contraseña y vuelve a tu espacio.</p>
+          <p className="auth-statement">
+            Define una nueva contraseña y vuelve a tu espacio.
+          </p>
         </section>
 
         <div className="auth-card">
@@ -144,7 +154,9 @@ export default function ResetPassword() {
             <rect x="2" y="20" width="10" height="4" />
           </svg>
         </div>
-        <p className="auth-statement">Define una nueva contraseña y vuelve a tu espacio.</p>
+        <p className="auth-statement">
+          Define una nueva contraseña y vuelve a tu espacio.
+        </p>
       </section>
 
       <div className="auth-card">
