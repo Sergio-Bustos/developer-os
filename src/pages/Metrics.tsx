@@ -691,7 +691,7 @@ export default function Metrics() {
   const availableRepos = Object.values(repoInsights).filter((item) => item.available).length
   const hasActivityAccess = availableRepos > 0
 
-  if (loading) {
+    if (loading) {
     return <div className="p-6 text-zinc-400">Cargando métricas...</div>
   }
 
@@ -795,7 +795,12 @@ export default function Metrics() {
             <div className="mt-6 grid gap-6 xl:grid-cols-2">
               <Section title="Commits · últimos 14 días" subtitle={`Basado en hasta ${COMMITS_PER_REPOSITORY} commits por repositorio durante los últimos ${COMMIT_WINDOW_DAYS} días.`}>
                 <div className="flex h-52 items-end gap-1.5 sm:gap-2">
-                  {activityByDay.map((day) => {
+                  {activityByDay.map((day, index) => {
+                    const dayNumber = day.date.getDate()
+                    const monthName = new Intl.DateTimeFormat('es-CO', { month: 'short' }).format(day.date).replace('.', '')
+                    const showMonth = index === 0 || dayNumber === 1
+                    // En pantallas chicas solo se rotula un día de cada dos (y siempre el último) para que no se crucen
+                    const showOnMobile = index % 2 === (activityByDay.length - 1) % 2
                     const height = day.count === 0
                       ? 3
                       : Math.max(8, (day.count / maxDailyCommits) * 100)
@@ -810,8 +815,12 @@ export default function Metrics() {
                           style={{ height: `${height}%` }}
                           title={`${formatDate(day.date.toISOString(), false)}: ${day.count} commits`}
                         />
-                        <span className="whitespace-nowrap text-[9px] text-zinc-600 sm:text-[10px]">
-                          {formatDate(day.date.toISOString(), false)}
+                        <span
+                          className={`h-7 flex-col items-center text-center text-[10px] leading-tight text-zinc-600 tabular-nums ${showOnMobile ? 'flex' : 'hidden sm:flex'}`}
+                          aria-label={formatDate(day.date.toISOString(), false)}
+                        >
+                          <span className="font-medium text-zinc-400">{dayNumber}</span>
+                          <span className="text-[9px]">{showMonth ? monthName : ''}</span>
                         </span>
                       </div>
                     )
@@ -1067,4 +1076,5 @@ function ActivityIcon({ type }: { type: ActivityItem['type'] }) {
   if (type === 'pull') return <GitPullRequest size={18} className="mt-0.5 shrink-0 text-zinc-500" />
   if (type === 'issue') return <CircleDot size={18} className="mt-0.5 shrink-0 text-zinc-500" />
   return <GitCommit size={18} className="mt-0.5 shrink-0 text-zinc-500" />
-}
+  }
+  
