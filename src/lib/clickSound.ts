@@ -26,6 +26,31 @@ const SELECTOR = [
 ].join(',')
 
 const VOLUME = 0.7
+const STORAGE_KEY = 'dos-sound'
+
+// Activado por defecto; la elección se recuerda en este navegador.
+let enabled = true
+try {
+  enabled = localStorage.getItem(STORAGE_KEY) !== 'off'
+} catch {
+  /* sin almacenamiento */
+}
+let playHook: (() => void) | null = null
+
+export function isSoundEnabled(): boolean {
+  return enabled
+}
+
+export function setSoundEnabled(value: boolean) {
+  enabled = value
+  try {
+    localStorage.setItem(STORAGE_KEY, value ? 'on' : 'off')
+  } catch {
+    /* sin almacenamiento */
+  }
+  window.dispatchEvent(new CustomEvent('dos-sound-change'))
+  if (value && playHook) playHook() // confirma con un click al volver a activarlo
+}
 const TAP_MAX_MS = 800 // más que esto es una pulsación larga, no un toque
 const TAP_MAX_MOVE = 10 // más que esto (px) es deslizar/scroll, no un toque
 
@@ -102,6 +127,7 @@ export function initClickSound() {
   }
 
   const play = () => {
+    if (!enabled) return
     if (ctx && ctx.state !== 'running') {
       try {
         const r = ctx.resume()
@@ -113,6 +139,11 @@ export function initClickSound() {
       return
     }
     shoot()
+  }
+
+  playHook = () => {
+    last = Date.now()
+    play()
   }
 
   const unlock = () => {
