@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from './ThemeToggle'
+import SoundToggle from './SoundToggle'
 import BrandMark from './BrandMark'
 
 const navigation = [
@@ -108,6 +109,7 @@ export default function AppLayout() {
             <NavLink to="/profile" className="rail-avatar" aria-label="Perfil y cuenta">
               {displayName.trim().charAt(0).toUpperCase() || 'D'}
             </NavLink>
+            <SoundToggle />
             <ThemeToggle />
             <button
               onClick={handleSignOut}
@@ -161,6 +163,7 @@ export default function AppLayout() {
             <button onClick={handleSignOut} className="rail-out">
               Cerrar sesión
             </button>
+            <SoundToggle />
             <ThemeToggle />
           </div>
         </div>
