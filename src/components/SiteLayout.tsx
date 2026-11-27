@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import BrandMark from './BrandMark'
 import ThemeToggle from './ThemeToggle'
+import SoundToggle from './SoundToggle'
 
 const links = [
   { name: 'Inicio', path: '/', end: true },
@@ -56,6 +57,7 @@ export default function SiteLayout() {
           </nav>
 
           <div className="site-tools">
+            <SoundToggle />
             <ThemeToggle />
             <button
               type="button"
